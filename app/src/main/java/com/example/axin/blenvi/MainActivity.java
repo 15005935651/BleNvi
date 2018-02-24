@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+//起始坐标点
         startPt = new LatLng(27.519709,106.92134);
         endPt = new LatLng(27.528423,106.888929);
         param = new BikeNaviLaunchParam().stPt(startPt).endPt(endPt);
