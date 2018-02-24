@@ -94,6 +94,10 @@
         </activity>
 
 
+        <activity android:name=".PoiSearchDemo">
+
+        </activity>
+
         <activity android:name=".BNaviGuideActivity">
 
         </activity>

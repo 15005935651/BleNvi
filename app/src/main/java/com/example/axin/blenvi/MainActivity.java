@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
     //百度地图数据
     private LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
-    private  double latitude,longitude;
+    public  static double latitude,longitude;
     private boolean isFirstLocation=true;
 
 
@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity
     private LatLng startPt,endPt;
     private BikeNavigateHelper mNaviHelper;
     private WalkNavigateHelper mWNaviHelper;
-    BikeNaviLaunchParam param;
-    WalkNaviLaunchParam walkParam;
+    private BikeNaviLaunchParam param;
+    private WalkNaviLaunchParam walkParam;
     private static boolean isPermissionRequested = false;
 
 
@@ -139,7 +139,9 @@ public class MainActivity extends AppCompatActivity
         walkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startWalkNavi();
+                // startWalkNavi();
+            Intent intent = new Intent(MainActivity.this,PoiSearchDemo.class);
+                startActivity(intent);
             }
         });
         try {
@@ -149,8 +151,8 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        startPt = new LatLng(27.5193,106.91466);
-        endPt = new LatLng(27.5199, 106.91716);
+        startPt = new LatLng(27.519709,106.92134);
+        endPt = new LatLng(27.528423,106.888929);
         param = new BikeNaviLaunchParam().stPt(startPt).endPt(endPt);
         walkParam = new WalkNaviLaunchParam().stPt(startPt).endPt(endPt);
         AppCompatImageButton reloc=(AppCompatImageButton)findViewById(R.id.reloc);
@@ -179,7 +181,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
     }
 
 

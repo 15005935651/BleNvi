@@ -9,6 +9,8 @@
     tools:context="com.example.axin.blenvi.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+
+
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
         android:layout_width="fill_parent"
