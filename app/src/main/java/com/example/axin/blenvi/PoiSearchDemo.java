@@ -4,8 +4,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
+
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
@@ -28,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 /**
  * 演示poi搜索功能
  */
@@ -46,7 +51,7 @@ public class PoiSearchDemo extends FragmentActivity implements OnGetGeoCoderResu
     //目的地经纬度
     public static double endlongitude;
     public static double endlatitude;
-    public static LatLng endlatLng;
+    public static LatLng endlatLng=null;
 
     GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 
@@ -105,6 +110,9 @@ public class PoiSearchDemo extends FragmentActivity implements OnGetGeoCoderResu
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(this);
 
+        keyWorldsView.setOnItemClickListener(new MyOnItemClickListener());
+
+
     }
 
     @Override
@@ -154,18 +162,24 @@ public class PoiSearchDemo extends FragmentActivity implements OnGetGeoCoderResu
     @Override
     public void onGetGeoCodeResult(GeoCodeResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-//            Toast.makeText(PoiSearchDemo.this, "抱歉，未能找到结果", Toast.LENGTH_LONG)
-//                    .show();
+            Toast.makeText(PoiSearchDemo.this, "抱歉，未能找到结果", Toast.LENGTH_LONG)
+                    .show();
             return;
         }
-        mBaiduMap.clear();
-        mBaiduMap.addOverlay(new MarkerOptions().position(result.getLocation())
-                .icon(BitmapDescriptorFactory
-                        .fromResource(R.drawable.icon_marka)));
-        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result
-                .getLocation()));
-        String strInfo = String.format("纬度：%f 经度：%f",
-                result.getLocation().latitude, result.getLocation().longitude);
+//        mBaiduMap.clear();
+//        mBaiduMap.addOverlay(new MarkerOptions().position(result.getLocation())
+//                .icon(BitmapDescriptorFactory
+//                        .fromResource(R.drawable.icon_marka)));
+//        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result
+//                .getLocation()));
+//        String strInfo = String.format("纬度：%f 经度：%f",
+//                result.getLocation().latitude, result.getLocation().longitude);
+
+        endlatitude=result.getLocation().latitude;
+        endlongitude=result.getLocation().longitude;
+        endlatLng=new LatLng(result.getLocation().latitude,result.getLocation().longitude);
+
+
     }
 
     @Override
@@ -185,5 +199,26 @@ public class PoiSearchDemo extends FragmentActivity implements OnGetGeoCoderResu
 
     }
 
+    private class MyOnItemClickListener implements AdapterView.OnItemClickListener{
+        public void onItemClick(AdapterView<?>parent, View view,int poition,long id){
+//            mBaiduMap.clear();
+//            mBaiduMap.addOverlay(new MarkerOptions().position(result.getLocation())
+//                    .icon(BitmapDescriptorFactory
+//                            .fromResource(R.drawable.icon_marka)));
+//            mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result
+//                    .getLocation()));
+//            String strInfo = String.format("纬度：%f 经度：%f",
+//                    result.getLocation().latitude, result.getLocation().longitude);
+            if(endlatLng!=null){
+                mBaiduMap.clear();
+            mBaiduMap.addOverlay(new MarkerOptions().position(endlatLng)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_marka)));
+
+            }
+
+
+            Toast.makeText(PoiSearchDemo.this,"ss",Toast.LENGTH_LONG).show();
+        }
+    }
 
 }

@@ -1,7 +1,8 @@
 package com.example.axin.blenvi;
-import com.getbase.floatingactionbutton.*;
+
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -48,6 +50,7 @@ import com.baidu.mapapi.walknavi.adapter.IWEngineInitListener;
 import com.baidu.mapapi.walknavi.adapter.IWRoutePlanListener;
 import com.baidu.mapapi.walknavi.model.WalkRoutePlanError;
 import com.baidu.mapapi.walknavi.params.WalkNaviLaunchParam;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQToken;
@@ -55,14 +58,15 @@ import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 
 
 public class MainActivity extends AppCompatActivity
@@ -96,6 +100,12 @@ public class MainActivity extends AppCompatActivity
     private CircleImageView qqlogin;
     private boolean isFirstLogin=false;
 
+    private SharedPreferences mPref;
+    private SharedPreferences.Editor mEditor;
+
+
+
+
  //退出按钮
  private static boolean isExit = false;
     @Override
@@ -103,9 +113,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         //个性化地图
-        setMapCustomFile();
+//        setMapCustomFile();
         setContentView(R.layout.activity_main);
-        MapView.setMapCustomEnable(true);
+//        MapView.setMapCustomEnable(true);
 
         //单车导航
         requestPermission();
@@ -181,6 +191,22 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+        mPref = getSharedPreferences("user_data", MODE_PRIVATE);
+        mEditor = mPref.edit();
+        //若之前曾设置过记住用户名，则读取并设置用户名
+        if (mPref.getBoolean("is_remember", false)) {
+            username.setText(mPref.getString("user_name", ""));
+            QQheadURL=mPref.getString("qqHeadUrl", "");
+            Picasso.with(getApplicationContext()).load(QQheadURL).into(qqlogin);
+//            String temp = mPref.getString("P", "");
+//            ByteArrayInputStream bais = new ByteArrayInputStream(Base64.decode(temp.getBytes(), Base64.DEFAULT));
+//            qqlogin.setImageDrawable(Drawable.createFromStream(bais, ""));
+
+        }
+
+
+
     }
 
 
@@ -600,26 +626,26 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
                     try {
                         QQheadURL=((JSONObject) o).getString("figureurl_qq_2");
                         QQname=((JSONObject) o).getString("nickname");
-                       // Toast.makeText(getApplicationContext(), ((JSONObject) o).getString("nickname") + ((JSONObject) o).getString("gender"), Toast.LENGTH_SHORT).show();
                         Log.v("UserInfo", o.toString());
-                      //  Intent intent1 = new Intent(MainActivity.this, MainActivity.class);
-                       // startActivity(intent1);
-                       // finish();
 
-//                        sp = getSharedPreferences("UserInfo", MODE_PRIVATE);
-//                        String ss = sp.getString("username","未登录");
-//                        username.setText(ss);
 
 
                         Picasso.with(getApplicationContext()).load(QQheadURL).into(qqlogin);
                         username.setText(QQname);
                         isFirstLogin=true;
+                        //保存QQ名称
+                        mEditor.putString("user_name", QQname);
+                        mEditor.putBoolean("is_remember", true);
+                        mEditor.putString("qqHeadUrl", QQheadURL);
 
-//                            sp = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-//                            SharedPreferences.Editor edit = sp.edit();
-//                            //通过editor对象写入数据
-//                            edit.putString("username", "zzzzz");
-//                            edit.commit();
+                        //保存QQ头像
+//                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.id.qqlogin);
+//                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+//                        String imageBase64 = new String(Base64.encodeToString(baos.toByteArray(),Base64.DEFAULT));
+//                        mEditor.putString("P",imageBase64 );
+                        mEditor.commit();
+
 
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
